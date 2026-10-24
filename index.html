@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BoloBridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFFFFF;--text:#0A0A0A;--muted:#6B6B6B;--border:rgba(0,0,0,.16);--glass:rgba(255,255,255,.55);--blob:rgba(0,0,0,.20)}
+@media (prefers-color-scheme:dark){:root{--bg:#000000;--text:#FFFFFF;--muted:#8E8E8E;--border:rgba(255,255,255,.18);--glass:rgba(0,0,0,.45);--blob:rgba(255,255,255,.22)}}
+html{scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',Arial,sans-serif;line-height:1.5;overflow-x:hidden}
+.ur{font-family:'Noto Nastaliq Urdu','Noto Naskh Arabic',serif;direction:rtl}
+
+/* blurred, merging background */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;background:var(--blob);filter:blur(80px)}
+.b1{width:60vmax;height:60vmax;top:-20vmax;left:-15vmax;animation:m1 18s ease-in-out infinite alternate}
+.b2{width:55vmax;height:55vmax;top:20vh;right:-20vmax;animation:m2 22s ease-in-out infinite alternate}
+.b3{width:50vmax;height:50vmax;bottom:-25vmax;left:20vw;animation:m3 26s ease-in-out infinite alternate}
+.b4{width:35vmax;height:35vmax;top:30vh;left:25vw;animation:m4 20s ease-in-out infinite alternate}
+@keyframes m1{to{transform:translate(40vw,25vh) scale(1.2)}}
+@keyframes m2{to{transform:translate(-45vw,-10vh) scale(1.25)}}
+@keyframes m3{to{transform:translate(25vw,-35vh) scale(1.15)}}
+@keyframes m4{to{transform:translate(30vw,15vh) scale(1.4)}}
+
+section{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px}
+
+/* small logo */
+.logo{position:fixed;z-index:5;top:0;left:0;display:flex;align-items:center;gap:8px;padding:18px 22px}
+.logo svg{width:24px;height:24px;color:var(--text)}
+.lt{display:flex;flex-direction:column;line-height:1}
+.lt .ur{font-size:13px;font-weight:700;line-height:1.7}
+.lt .en{font-size:9px;font-weight:700;letter-spacing:3.5px;margin-top:-3px}
+
+/* intro */
+.intro h1{font-size:clamp(48px,11vw,128px);line-height:1;letter-spacing:-4px;font-weight:700;margin:0;text-align:center}
+.intro p{margin:24px 0 0;font-size:clamp(14px,1.7vw,18px);color:var(--muted);text-align:center}
+.w{display:inline-block;opacity:0;transform:translateY(24px);filter:blur(14px);animation:wi .9s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--i)*.5s + .3s);margin:0 .1em}
+@keyframes wi{to{opacity:1;transform:none;filter:blur(0)}}
+.fade{opacity:0;animation:fi 1s ease forwards}
+@keyframes fi{to{opacity:1}}
+.start{margin-top:34px;display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:1px solid var(--text);border-radius:999px;color:var(--text);text-decoration:none;font-size:14px;font-weight:600;transition:.25s}
+.start:hover{background:var(--text);color:var(--bg)}
+.start svg{width:15px;height:15px}
+@media (prefers-reduced-motion:reduce){.w,.fade{animation:none;opacity:1;transform:none;filter:none}.blob{animation:none}html{scroll-behavior:auto}}
+
+/* translator */
+.app{width:100%;max-width:740px;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:24px;overflow:hidden}
+.bar{display:flex;align-items:center;justify-content:center;gap:14px;padding:14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;letter-spacing:.5px}
+.bar svg{width:16px;height:16px;stroke:var(--muted)}
+.chat{height:300px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.empty{margin:auto;color:var(--muted);font-size:14px;text-align:center}
+.msg{max-width:82%;padding:12px 16px;border-radius:18px;animation:in .45s ease}
+.msg small{display:block;font-size:11px;letter-spacing:.4px;opacity:.65;margin-bottom:3px}
+.msg .big{font-size:18px;font-weight:500;word-break:break-word}
+.msg .big.ur{font-size:21px;line-height:2}
+.msg .orig{font-size:14px;opacity:.85;word-break:break-word}
+.msg .orig.ur{font-size:17px;line-height:1.9}
+.me{align-self:flex-end;background:var(--text);color:var(--bg);border-bottom-right-radius:4px}
+.them{align-self:flex-start;border:1px solid var(--border);border-bottom-left-radius:4px}
+.pl{margin-top:8px;font:inherit;font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;opacity:.8}
+.pl:hover{opacity:1}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.ctrl{border-top:1px solid var(--border);padding:10px 20px 20px}
+canvas{width:100%;height:130px;display:block}
+.status{text-align:center;font-size:13px;color:var(--muted);min-height:20px;margin:0 0 14px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font:inherit;font-weight:600;font-size:15px;padding:14px;border-radius:14px;border:1px solid var(--text);background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}
+button svg{width:20px;height:20px}
+button.p{background:var(--text);color:var(--bg)}
+button:hover:not(:disabled){transform:translateY(-1px)}
+button:disabled{opacity:.45;cursor:default}
+.txtrow{display:flex;gap:10px;margin-top:14px}
+textarea{flex:1;min-height:48px;max-height:120px;resize:none;padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--text);font:inherit;font-size:15px}
+textarea:focus{outline:none;border-color:var(--text)}
+.small{padding:12px 16px;font-size:14px;white-space:nowrap}
+.note{text-align:center;font-size:11px;color:var(--muted);margin:14px 0 0}
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+
+<div class="logo">
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" aria-hidden="true">
+    <rect x="18" y="5" width="12" height="23" rx="6" fill="currentColor" stroke="none"/>
+    <path d="M12 23a12 12 0 0 0 24 0M24 35v6M17 42h14" stroke-width="3" stroke-linecap="round"/>
+    <path d="M8 17q-3.5 7 0 14M40 17q3.5 7 0 14" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  </svg>
+  <div class="lt"><span class="ur">بولو</span><span class="en">BRIDGE</span></div>
+</div>
+
+<section class="intro" id="intro">
+  <h1><span class="w" style="--i:0">Your</span><span class="w" style="--i:1">voice.</span><span class="w" style="--i:2">Their</span><span class="w" style="--i:3">language.</span></h1>
+  <p class="fade" style="animation-delay:2.7s">Urdu to English and English to Urdu.</p>
+  <a class="start fade" style="animation-delay:3.3s" href="#main">Start
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+</section>
+
+<section id="main">
+  <div class="app">
+    <div class="bar"><span>URDU</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13l-3-3M17 17H4l3 3"/></svg>
+      <span>ENGLISH</span></div>
+    <div class="chat" id="chat"><div class="empty" id="empty">Your conversation starts here.<br>Choose a language and start speaking.</div></div>
+    <div class="ctrl">
+      <canvas id="wave"></canvas>
+      <div class="status" id="status">Ready</div>
+      <div class="btns">
+        <button class="p" id="bUr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Speak Urdu</button>
+        <button id="bEn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Speak English</button>
+      </div>
+      <div class="txtrow">
+        <textarea id="txt" rows="1" placeholder="Or type a sentence in English or Urdu"></textarea>
+        <button class="small" id="bTx">Translate</button>
+        <button class="small" id="bClr">Clear</button>
+      </div>
+      <p class="note">Translations may not be perfect. Check important information.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const API = "/translate";
+const chat = document.getElementById('chat'), st = document.getElementById('status');
+const bUr = document.getElementById('bUr'), bEn = document.getElementById('bEn');
+const bTx = document.getElementById('bTx'), bClr = document.getElementById('bClr'), txt = document.getElementById('txt');
+const EMPTY_HTML = chat.innerHTML;
+let amp = 0.15, target = 0.15, busy = false, currentAudio = null;
+
+/* waveform */
+const cv = document.getElementById('wave'), cx = cv.getContext('2d');
+function size(){const r=window.devicePixelRatio||1;cv.width=cv.clientWidth*r;cv.height=cv.clientHeight*r;cx.setTransform(r,0,0,r,0,0)}
+size(); addEventListener('resize', size);
+function draw(t){
+  const w=cv.clientWidth,h=cv.clientHeight,step=11,n=Math.floor(w/step);
+  cx.clearRect(0,0,w,h);
+  amp+=(target-amp)*0.08;
+  cx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#fff';
+  for(let i=0;i<n;i++){
+    const e=Math.sin(Math.PI*i/(n-1));
+    const v=(Math.sin(t/260+i*.5)+Math.sin(t/170+i*.85)*.6+1.6)/3.2;
+    const bh=Math.max(4,h*amp*e*v*1.7);
+    const x=i*step+3,y=(h-bh)/2;
+    cx.beginPath();
+    if(cx.roundRect){cx.roundRect(x,y,5,bh,2.5)}else{cx.rect(x,y,5,bh)}
+    cx.fill();
+  }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+function setBusy(b){busy=b;[bUr,bEn,bTx].forEach(x=>x.disabled=b)}
+function setStatus(t,a){st.textContent=t;if(a!==undefined)target=a}
+
+/* backend */
+async function translate(text, direction){
+  const r = await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:text,direction:direction})});
+  if(!r.ok){
+    let d=""; try{ d=(await r.json()).detail }catch(e){}
+    throw new Error(d || ("Server error "+r.status));
+  }
+  return r.json();
+}
+function playAudio(b64){
+  return new Promise(res=>{
+    if(currentAudio){currentAudio.pause()}
+    const a=new Audio("data:audio/mpeg;base64,"+b64);
+    currentAudio=a;
+    a.onended=()=>res(true);
+    a.onerror=()=>res(false);
+    a.play().catch(()=>res(false));
+  });
+}
+
+/* chat bubbles */
+function addMessage(direction, original, translated, audio){
+  const e=document.getElementById('empty'); if(e) e.remove();
+  const fromUrdu = direction==="ur-en";
+  const m=document.createElement('div'); m.className='msg '+(fromUrdu?'me':'them');
+  const s1=document.createElement('small'); s1.textContent=fromUrdu?'You said':'They said';
+  const big=document.createElement('div'); big.className='big'+(fromUrdu?'':' ur'); big.textContent=translated;
+  const s2=document.createElement('small'); s2.textContent='Original'; s2.style.marginTop='6px';
+  const og=document.createElement('div'); og.className='orig'+(fromUrdu?' ur':''); og.textContent=original;
+  const pl=document.createElement('button'); pl.className='pl'; pl.textContent='Play again';
+  pl.onclick=async()=>{ if(busy) return; setStatus('Speaking...',.6); await playAudio(audio); setStatus('Ready',.15); };
+  m.append(s1,big,s2,og,pl);
+  chat.appendChild(m); chat.scrollTop=chat.scrollHeight;
+}
+
+async function handle(text, direction){
+  setBusy(true); setStatus('Translating...',.3);
+  try{
+    const d = await translate(text, direction);
+    addMessage(direction, text, d.translated_text, d.audio_mp3);
+    setStatus(direction==="ur-en"?'Speaking in English...':'Speaking in Urdu...',.6);
+    const ok = await playAudio(d.audio_mp3);
+    setStatus(ok?'Ready':'Ready. Press Play again to hear it.',.15);
+  }catch(err){
+    setStatus('Error: '+err.message,.15);
+  }finally{
+    setBusy(false);
+  }
+}
+
+/* microphone (Chrome speech recognition) */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function listen(lang, direction){
+  if(!SR){ setStatus('Please open this page in Google Chrome.'); return; }
+  const rec = new SR(); rec.lang=lang; rec.interimResults=false; rec.maxAlternatives=1;
+  let done=false;
+  setBusy(true); setStatus(lang==="ur-PK"?'Listening to Urdu...':'Listening to English...',.95);
+  rec.onresult=e=>{ done=true; const t=e.results[0][0].transcript; setBusy(false); handle(t,direction); };
+  rec.onerror=e=>{
+    done=true; setBusy(false);
+    const m={"not-allowed":"Microphone is blocked. Allow it from the address bar.","no-speech":"I did not hear anything. Please try again.","network":"Speech recognition needs internet.","audio-capture":"No microphone found."};
+    setStatus(m[e.error]||('Error: '+e.error),.15);
+  };
+  rec.onend=()=>{ if(!done){ setBusy(false); setStatus('Ready',.15); } };
+  try{ rec.start(); }catch(err){ setBusy(false); setStatus('Ready',.15); }
+}
+
+bUr.onclick=()=>listen('ur-PK','ur-en');
+bEn.onclick=()=>listen('en-US','en-ur');
+
+function sendText(){
+  const t=txt.value.trim(); if(!t||busy) return;
+  txt.value='';
+  const isUrdu=/[\u0600-\u06FF]/.test(t);
+  handle(t, isUrdu?'ur-en':'en-ur');
+}
+bTx.onclick=sendText;
+txt.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendText(); } });
+bClr.onclick=()=>{ if(currentAudio){currentAudio.pause()} chat.innerHTML=EMPTY_HTML; setStatus('Ready',.15); };
+</script>
+</body>
+</html>
